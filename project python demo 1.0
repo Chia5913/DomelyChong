@@ -1,0 +1,143 @@
+class User:
+    def __init__(self, username, role):
+        self.username = username
+        self.role = role
+
+class UserManager:
+    def __init__(self):
+        self.users = []
+        self.customers = []
+        self.super_user = None
+
+    def add_super_user(self, username):
+        if self.super_user:
+            print("Super user already exists.")
+        else:
+            self.super_user = User(username, 'super_user')
+            self.users.append(self.super_user)
+            print(f"Super user {username} added.")
+
+    def add_user(self, username, role):
+        if role == 'super_user':
+            print("Only one super user allowed.")
+            return
+        new_user = User(username, role)
+        self.users.append(new_user)
+        print(f"User {username} added with role {role}.")
+
+    def verify_customer(self, username):
+        if self.super_user or self.admin:
+            customer = next((user for user in self.customers if user.username == username), None)
+            if customer:
+                customer.verified = True
+                print(f"Customer {username} verified.")
+            else:
+                print(f"No such customer {username}.")
+        else:
+            print("Access denied. Only super user or admin can verify customers.")
+
+    def modify_user(self, username, new_role):
+        if self.super_user:
+            user = next((user for user in self.users if user.username == username), None)
+            if user:
+                user.role = new_role
+                print(f"User {username} role modified to {new_role}.")
+            else:
+                print(f"No such user {username}.")
+        else:
+            print("Access denied. Only super user can modify users.")
+
+    def disable_user(self, username):
+        if self.super_user:
+            user = next((user for user in self.users if user.username == username), None)
+            if user:
+                self.users.remove(user)
+                print(f"User {username} disabled.")
+            else:
+                print(f"No such user {username}.")
+        else:
+            print("Access denied. Only super user can disable users.")
+
+    def inquiry_system_usage(self):
+        if self.super_user:
+            print("System usage inquiry:")
+            # Implement system usage inquiry logic here
+        else:
+            print("Access denied. Only super user can inquire system usage.")
+
+    def check_order_status(self):
+        print("Checking order status:")
+        # Implement order status check logic here
+
+    def generate_report(self):
+        if self.super_user or self.admin:
+            print("Generating report:")
+            # Implement report generation logic here
+        else:
+            print("Access denied. Only super user or admin can generate reports.")
+
+    def register_customer(self, username):
+        new_customer = User(username, 'customer')
+        self.customers.append(new_customer)
+        print(f"Customer {username} registered. Waiting for verification.")
+
+    def register_admin(self, username):
+        new_admin = User(username, 'admin')
+        self.users.append(new_admin)
+        print(f"Admin {username} registered. Waiting for super user approval.")
+
+def main():
+    user_manager = UserManager()
+
+    while True:
+        print("\nMenu:")
+        print("1. Add super user (super user only)")
+        print("2. Add user (super user only)")
+        print("3. Verify new customer (admin and super user)")
+        print("4. Modify user (super user only)")
+        print("5. Disable user access (super user only)")
+        print("6. Inquiry system usage (super user only)")
+        print("7. Check customer order status (all users)")
+        print("8. Generate report (admin and super user only)")
+        print("9. Register new customer")
+        print("10. Register new admin (super user approval required)")
+        print("0. Exit")
+
+        choice = input("Enter your choice: ")
+
+        if choice == '0':
+            break
+        elif choice == '1':
+            username = input("Enter username for super user: ")
+            user_manager.add_super_user(username)
+        elif choice == '2':
+            username = input("Enter username for new user: ")
+            role = input("Enter role for new user (admin/customer): ")
+            user_manager.add_user(username, role)
+        elif choice == '3':
+            username = input("Enter username of customer to verify: ")
+            user_manager.verify_customer(username)
+        elif choice == '4':
+            username = input("Enter username of user to modify: ")
+            new_role = input("Enter new role for user: ")
+            user_manager.modify_user(username, new_role)
+        elif choice == '5':
+            username = input("Enter username of user to disable: ")
+            user_manager.disable_user(username)
+        elif choice == '6':
+            user_manager.inquiry_system_usage()
+        elif choice == '7':
+            user_manager.check_order_status()
+        elif choice == '8':
+            user_manager.generate_report()
+        elif choice == '9':
+            username = input("Enter username for new customer: ")
+            user_manager.register_customer(username)
+        elif choice == '10':
+            username = input("Enter username for new admin: ")
+            user_manager.register_admin(username)
+        else:
+            print("Invalid choice. Please try again.")
+
+if __name__ == "__main__":
+    main()
